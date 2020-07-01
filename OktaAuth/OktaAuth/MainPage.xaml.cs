@@ -17,5 +17,10 @@ namespace OktaAuth
         {
             InitializeComponent();
         }
+
+        private void LoginButtonClicked(object sender, EventArgs e)
+        {
+            
+        }
     }
 }

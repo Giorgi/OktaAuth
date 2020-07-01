@@ -6,11 +6,12 @@
              mc:Ignorable="d"
              x:Class="OktaAuth.MainPage">
 
-    <StackLayout>
-        <!-- Place new controls here -->
-        <Label Text="Welcome to Xamarin.Forms!" 
-           HorizontalOptions="Center"
-           VerticalOptions="CenterAndExpand" />
+    <StackLayout VerticalOptions="Center">
+        <Label Text="Welcome to Xamarin.Forms!" x:Name="WelcomeLabel"
+               HorizontalOptions="Center"
+               VerticalOptions="CenterAndExpand" />
+        <Button x:Name="LoginButton" Text="Log in with Okta" 
+                HorizontalOptions="Center" Clicked="LoginButtonClicked"/>
     </StackLayout>
 
 </ContentPage>
