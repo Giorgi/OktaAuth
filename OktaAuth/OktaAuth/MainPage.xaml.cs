@@ -35,12 +35,19 @@ namespace OktaAuth
                 if (nameClaim != null)
                 {
                     WelcomeLabel.Text = $"Welcome to Xamarin.Forms {nameClaim.Value}!";
+                    LogoutButton.IsVisible = !(LoginButton.IsVisible = false);
                 }
             }
             catch (TaskCanceledException)
             {
 
             }
+        }
+
+        private void LogoutButtonClicked(object sender, EventArgs e)
+        {
+            WelcomeLabel.Text = "Welcome to Xamarin.Forms!";
+            LogoutButton.IsVisible = !(LoginButton.IsVisible = true);
         }
     }
 }
