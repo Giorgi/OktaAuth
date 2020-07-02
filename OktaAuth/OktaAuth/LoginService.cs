@@ -1,9 +1,7 @@
 ﻿using System;
 using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
-using Microsoft.IdentityModel.Tokens;
 using Xamarin.Essentials;
 
 namespace OktaAuth
@@ -11,6 +9,8 @@ namespace OktaAuth
     class LoginService
     {
         private string codeVerifier;
+
+        private const string IDToken = "id_token";
         private const string CodeChallengeMethod = "S256";
 
         public string BuildAuthenticationUrl()
@@ -19,8 +19,8 @@ namespace OktaAuth
             var nonce = CreateCryptoGuid();
             
             var codeChallenge = CreateCodeChallenge();
-            
-            return $"{OktaConfiguration.OrganizationUrl}/oauth2/default/v1/authorize?response_type=id_token&scope=openid%20profile&redirect_uri={OktaConfiguration.Callback}&client_id={OktaConfiguration.ClientId}&state={state}&code_challenge={codeChallenge}&code_challenge_method={CodeChallengeMethod}&nonce={nonce}";
+
+            return $"{OktaConfiguration.OrganizationUrl}/oauth2/default/v1/authorize?response_type={IDToken}&scope=openid%20profile&redirect_uri={OktaConfiguration.Callback}&client_id={OktaConfiguration.ClientId}&state={state}&code_challenge={codeChallenge}&code_challenge_method={CodeChallengeMethod}&nonce={nonce}";
         }
 
         private string CreateCryptoGuid()
