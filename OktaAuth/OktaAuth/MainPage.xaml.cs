@@ -2,8 +2,9 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
-using System.Text;
+using System.Security.Claims;
 using System.Threading.Tasks;
+using Xamarin.Essentials;
 using Xamarin.Forms;
 
 namespace OktaAuth
@@ -13,14 +14,33 @@ namespace OktaAuth
     [DesignTimeVisible(false)]
     public partial class MainPage : ContentPage
     {
+        private readonly LoginService loginService = new LoginService();
+
         public MainPage()
         {
             InitializeComponent();
         }
 
-        private void LoginButtonClicked(object sender, EventArgs e)
+        private async void LoginButtonClicked(object sender, EventArgs e)
         {
-            
+            try
+            {
+                var callbackUrl = new Uri(OktaConfiguration.Callback);
+                var loginUrl = new Uri(loginService.BuildAuthenticationUrl());
+                var authenticationResult = await WebAuthenticator.AuthenticateAsync(loginUrl, callbackUrl);
+
+                var token = loginService.ParseAuthenticationResult(authenticationResult);
+                var nameClaim = token.Claims.FirstOrDefault(claim => claim.Type == "given_name");
+
+                if (nameClaim != null)
+                {
+                    WelcomeLabel.Text = $"Welcome to Xamarin.Forms {nameClaim.Value}!";
+                }
+            }
+            catch (TaskCanceledException)
+            {
+
+            }
         }
     }
 }
