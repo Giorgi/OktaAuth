@@ -23,6 +23,11 @@ namespace OktaAuth
             return $"{OktaConfiguration.OrganizationUrl}/oauth2/default/v1/authorize?response_type={IDToken}&scope=openid%20profile&redirect_uri={OktaConfiguration.Callback}&client_id={OktaConfiguration.ClientId}&state={state}&code_challenge={codeChallenge}&code_challenge_method={CodeChallengeMethod}&nonce={nonce}";
         }
 
+        public string BuildLogOutUrl(WebAuthenticatorResult authenticatorResult)
+        {
+            return $"{OktaConfiguration.OrganizationUrl}/oauth2/default/v1/logout?post_logout_redirect_uri={OktaConfiguration.LogOutCallback}&client_id={OktaConfiguration.ClientId}&id_token_hint={authenticatorResult.IdToken}";
+        }
+
         private string CreateCryptoGuid()
         {
             using (var generator = RandomNumberGenerator.Create())

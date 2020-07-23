@@ -15,6 +15,7 @@ namespace OktaAuth
     public partial class MainPage : ContentPage
     {
         private readonly LoginService loginService = new LoginService();
+        private WebAuthenticatorResult authenticatorResult;
 
         public MainPage()
         {
@@ -27,9 +28,9 @@ namespace OktaAuth
             {
                 var callbackUrl = new Uri(OktaConfiguration.Callback);
                 var loginUrl = new Uri(loginService.BuildAuthenticationUrl());
-                var authenticationResult = await WebAuthenticator.AuthenticateAsync(loginUrl, callbackUrl);
+                authenticatorResult = await WebAuthenticator.AuthenticateAsync(loginUrl, callbackUrl);
 
-                var token = loginService.ParseAuthenticationResult(authenticationResult);
+                var token = loginService.ParseAuthenticationResult(authenticatorResult);
                 var nameClaim = token.Claims.FirstOrDefault(claim => claim.Type == "given_name");
 
                 if (nameClaim != null)
@@ -44,10 +45,22 @@ namespace OktaAuth
             }
         }
 
-        private void LogoutButtonClicked(object sender, EventArgs e)
+        private async void LogoutButtonClicked(object sender, EventArgs e)
         {
-            WelcomeLabel.Text = "Welcome to Xamarin.Forms!";
-            LogoutButton.IsVisible = !(LoginButton.IsVisible = true);
+            try
+            {
+                var callbackUrl = new Uri(OktaConfiguration.LogOutCallback);
+                var buildLogOutUrl = loginService.BuildLogOutUrl(authenticatorResult);
+                var logoutResult = await WebAuthenticator.AuthenticateAsync(new Uri(buildLogOutUrl), callbackUrl);
+                authenticatorResult = null;
+
+                WelcomeLabel.Text = "Welcome to Xamarin.Forms!";
+                LogoutButton.IsVisible = !(LoginButton.IsVisible = true);
+            }
+            catch (TaskCanceledException)
+            {
+
+            }
         }
     }
 }

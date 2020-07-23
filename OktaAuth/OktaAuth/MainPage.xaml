@@ -8,9 +8,9 @@
 
     <StackLayout VerticalOptions="Center">
         <Label Text="Welcome to Xamarin.Forms!" x:Name="WelcomeLabel"
-               HorizontalOptions="Center"
+               HorizontalOptions="Center" TextColor="Black" FontSize="Large"
                VerticalOptions="CenterAndExpand" />
-        <Button x:Name="LoginButton" Text="Log in with Okta" 
+        <Button x:Name="LoginButton" Text="Log in with Okta"
                 HorizontalOptions="Center" Clicked="LoginButtonClicked"/>
         <Button x:Name="LogoutButton" Text="Log out" IsVisible="False"
                 HorizontalOptions="Center" Clicked="LogoutButtonClicked"/>
