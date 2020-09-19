@@ -3,7 +3,6 @@ using System;
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.Net.Http;
-using System.Net.Http.Headers;
 using System.Security.Cryptography;
 using System.Text;
 using System.Text.Json;
@@ -33,7 +32,6 @@ namespace OktaAuth
         {
             using (var httpClient = new HttpClient { BaseAddress = new Uri($"{OktaConfiguration.OrganizationUrl}/oauth2/default/v1/") })
             {
-                httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
                 var data = new Dictionary<string, string>
                 {
                     { "grant_type", "authorization_code" },
