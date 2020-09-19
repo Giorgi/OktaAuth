@@ -1,8 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
-using System.Security.Claims;
 using System.Threading.Tasks;
 using Xamarin.Essentials;
 using Xamarin.Forms;
@@ -15,7 +13,7 @@ namespace OktaAuth
     public partial class MainPage : ContentPage
     {
         private readonly LoginService loginService = new LoginService();
-        private WebAuthenticatorResult authenticatorResult;
+        private UserToken userToken;
 
         public MainPage()
         {
@@ -28,10 +26,13 @@ namespace OktaAuth
             {
                 var callbackUrl = new Uri(OktaConfiguration.Callback);
                 var loginUrl = new Uri(loginService.BuildAuthenticationUrl());
-                authenticatorResult = await WebAuthenticator.AuthenticateAsync(loginUrl, callbackUrl);
-
-                var token = loginService.ParseAuthenticationResult(authenticatorResult);
-                var nameClaim = token.Claims.FirstOrDefault(claim => claim.Type == "given_name");
+                
+                var authenticatorResult = await WebAuthenticator.AuthenticateAsync(loginUrl, callbackUrl);
+                
+                userToken = await loginService.ExchangeCodeForIdToken(authenticatorResult);
+                var idToken = loginService.ParseAuthenticationResult(userToken.IdToken);
+                
+                var nameClaim = idToken.Claims.FirstOrDefault(claim => claim.Type == "name");
 
                 if (nameClaim != null)
                 {
@@ -50,9 +51,9 @@ namespace OktaAuth
             try
             {
                 var callbackUrl = new Uri(OktaConfiguration.LogOutCallback);
-                var buildLogOutUrl = loginService.BuildLogOutUrl(authenticatorResult);
+                var buildLogOutUrl = loginService.BuildLogOutUrl(userToken.IdToken);
                 var logoutResult = await WebAuthenticator.AuthenticateAsync(new Uri(buildLogOutUrl), callbackUrl);
-                authenticatorResult = null;
+                userToken = null;
 
                 WelcomeLabel.Text = "Welcome to Xamarin.Forms!";
                 LogoutButton.IsVisible = !(LoginButton.IsVisible = true);
